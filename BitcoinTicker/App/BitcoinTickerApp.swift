@@ -17,7 +17,10 @@ struct BitcoinTickerApp: App {
         }
         _isMenuBarItemInserted = State(initialValue: true)
         // shortcut: the task keeps the client alive and drains its events; M2b moves this into MarketDataStore.
-        let client = BinanceWebSocketClient(url: BinanceEndpoint.url, transport: URLSessionWebSocketTransport())
+        let client = BinanceWebSocketClient(
+            url: BinanceEndpoint.url, transport: URLSessionWebSocketTransport(),
+            clock: ContinuousClock(), random: SystemRandomSource()
+        )
         Task {
             await client.start()
             for await _ in client.events {}
