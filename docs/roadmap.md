@@ -51,8 +51,8 @@ Write the tests for each milestone in the same milestone as the code they cover.
 
 Message model and parser first (implementation order step 2):
 
-- [ ] Implement `BinanceTickerMessage`: decode, validate, and parse the required fields (spec §5.3).
-- [ ] Add tests for valid, invalid, incomplete, and unexpected-symbol payloads, for numeric strings with a garbage suffix (`"12abc"`) or a trailing newline (`"12\n"`), for the length limit (a 32-character value accepted, a 33-character value rejected), for other forms the pattern must reject (`"1e5"`, which `Decimal(string:locale:)` accepts, `"+1"`, `".5"`, `"5."`, `""`), for out-of-range values (NaN, zero or negative price, negative volume), for accepted edge values (zero volume, negative `P`), for `P` in percentage points, for a binary frame, and for parsing under a comma-decimal locale (`pt_BR`, through a test plan configuration with language Portuguese (Brazil), region Brazil, and `EXPECT_COMMA_DECIMAL=1`; the test runs only when that variable is set, and first asserts that `Locale.current.decimalSeparator` is `","`, spec §5.3).
+- [x] Implement `BinanceTickerMessage`: decode, validate, and parse the required fields (spec §5.3).
+- [x] Add tests for valid, invalid, incomplete, and unexpected-symbol payloads, for numeric strings with a garbage suffix (`"12abc"`) or a trailing newline (`"12\n"`), for the length limit (a 32-character value accepted, a 33-character value rejected), for other forms the pattern must reject (`"1e5"`, which `Decimal(string:locale:)` accepts, `"+1"`, `".5"`, `"5."`, `""`), for out-of-range values (NaN, zero or negative price, negative volume), for accepted edge values (zero volume, negative `P`), for `P` in percentage points, for a binary frame, and for parsing under a comma-decimal locale (`pt_BR`, through a test plan configuration with language Portuguese (Brazil), region Brazil, and `EXPECT_COMMA_DECIMAL=1`; the test runs only when that variable is set, and first asserts that `Locale.current.decimalSeparator` is `","`, spec §5.3).
 
 Then transport, connection, and receive loop (step 3):
 
