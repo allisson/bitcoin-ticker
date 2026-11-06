@@ -70,7 +70,7 @@ Then transport, connection, and receive loop (step 3):
 - [x] Decide the endpoint at build time (spec §5.2): keep `stream.binance.com` unless it fails any of the handshake, payload, or ping/pong checks and `data-stream.binance.vision` passes all of them. Record the decision in the verification log (§9).
 - [x] Handle malformed messages and transport errors without crashing: discard a malformed message and keep the connection open, logging only the first one per connection (spec §5.5).
 - [x] Add structured local logging with `Logger` for actionable diagnostics, including every connection-state change at `.notice` with `privacy: .public` on the state name, and ticker messages only at `.debug`, without repeating the same failure at high frequency (spec §5.5, §9). Freshness transitions are logged by the store in M2b.
-- [ ] Add tests, with the fake transport, for the handshake status mapping: 451, 403, 429, 418, another 4xx/5xx, and an unreadable status.
+- [x] Add tests, with the fake transport, for the handshake status mapping of 451, 403, 429, and 418; the full table, including another 4xx/5xx and an unreadable status, as a pure-function test.
 
 **Exit criteria:** Unit tests pass using a fake transport, and a development build logs live `BTCUSDT` ticker updates from Binance (at `.debug`, visible with `log stream --level debug --predicate 'subsystem == "io.github.allisson.BitcoinTicker"'`; spec §9).
 
@@ -103,6 +103,7 @@ Tests, using the fake transport, clock, and random source:
 - [ ] Minimum attempt interval: a path flapping between unavailable and available every 0.5 s, and repeated `reconnect()` calls, never start two attempts less than the interval apart; several `reconnect()` calls while an attempt waits for the interval start exactly one attempt.
 - [ ] Leaving Offline does not change k.
 - [ ] A 429 on the very first attempt giving Rate limited, not Connecting (spec §5.7).
+- [ ] A rejection with another 4xx/5xx and with an unreadable status, through the fake transport: Connecting before the first handshake, Reconnecting after, followed by the backoff delay for k.
 - [ ] `setNetworkAvailable(false)` closing a connection before the stability interval does not increment k.
 - [ ] A `reconnect()` closing a connection before the stability interval does not increment k.
 - [ ] `reconnect()` during an in-flight handshake doing nothing.
