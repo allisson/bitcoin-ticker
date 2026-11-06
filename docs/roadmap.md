@@ -27,22 +27,23 @@ Write the tests for each milestone in the same milestone as the code they cover.
 
 **Estimate:** 0.5–1 day
 
-- [ ] Create the macOS application project.
-- [ ] Use Xcode 26 or later. Set the minimum deployment target to macOS 14, Swift 6 language mode, `SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated`, `SWIFT_APPROACHABLE_CONCURRENCY = YES` (set explicitly), and a Swift Testing test target (spec §4).
-- [ ] Configure app identity, bundle identifier (`io.github.allisson.BitcoinTicker`, spec §4), and versioning (`MARKETING_VERSION = 1.0.0`, `CURRENT_PROJECT_VERSION = 1`; spec §11). Set `PRODUCT_NAME` and `PRODUCT_MODULE_NAME` per spec §4. Give the Debug configuration a `.debug` suffix on `PRODUCT_BUNDLE_IDENTIFIER`: otherwise the single-instance check (spec §7) quits a Debug build launched from Xcode while the installed app runs, and the two builds share `UserDefaults` and the `SMAppService` registration. Release keeps the plain identifier, so the M4 second-copy check is unaffected.
-- [ ] Set `INFOPLIST_KEY_LSUIElement = YES` (no Dock icon; no separate Info.plist file, spec §4).
-- [ ] Enable App Sandbox with only the `com.apple.security.network.client` entitlement, and enable hardened runtime. Remove the read-only user-selected files access the Xcode template enables (`ENABLE_USER_SELECTED_FILES`, spec §10).
-- [ ] Create the initial source and test groups, and the test plan (spec §8).
-- [ ] When the process is a unit-test host, skip the `MarketDataStore` and the single-instance check, and do not insert the menu bar item (`MenuBarExtra(isInserted:)` bound to `false`; spec §7). Verify which signal detects the host under both test plan configurations, and record it in the verification log (§9). Check: launch the Debug `.app` outside Xcode (Finder or `open`; Xcode stops the running app of the scheme before it runs tests), then run the suite with `xcodebuild test` from the terminal; it runs to the end and shows no second menu bar item. The WebSocket check comes in M1, once the app starts the client.
-- [ ] Add the app icon (`AppIcon` asset; spec §11).
-- [ ] Allow a single instance: quit at launch if another instance with the same bundle identifier and an earlier `launchDate` is running, excluding the current process from the list, and insert the menu bar item only after the check passes (spec §7). Keep the decision in a pure function and test it: another instance launched earlier (quit), later (stay), at the same `launchDate` or with a `nil` date (the higher `processIdentifier` quits), and only the current process in the list (stay).
-- [ ] Add a `MenuBarExtra` entry point with `.menuBarExtraStyle(.window)`.
-- [ ] Add a basic menu bar label and a popover placeholder with a Quit button.
-- [ ] Verify that the `MenuBarExtra` label renders a composite label (status symbol, price, percentage) and honors `.monospacedDigit()`. If not, switch to a template image rendered with `ImageRenderer` (spec §6.1). Record the result in the verification log (§9).
-- [ ] Expand the existing README with the development setup.
-- [ ] Set signing to "Sign to Run Locally" (ad hoc) for every configuration; no Apple Developer Program membership is needed (spec §11).
+- [x] Create the macOS application project.
+- [x] Use Xcode 26 or later. Set the minimum deployment target to macOS 14, Swift 6 language mode, `SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated`, `SWIFT_APPROACHABLE_CONCURRENCY = YES` (set explicitly), and a Swift Testing test target (spec §4).
+- [x] Configure app identity, bundle identifier (`io.github.allisson.BitcoinTicker`, spec §4), and versioning (`MARKETING_VERSION = 1.0.0`, `CURRENT_PROJECT_VERSION = 1`; spec §11). Set `PRODUCT_NAME` and `PRODUCT_MODULE_NAME` per spec §4. Give the Debug configuration a `.debug` suffix on `PRODUCT_BUNDLE_IDENTIFIER`: otherwise the single-instance check (spec §7) quits a Debug build launched from Xcode while the installed app runs, and the two builds share `UserDefaults` and the `SMAppService` registration. Release keeps the plain identifier, so the M4 second-copy check is unaffected.
+- [x] Set `INFOPLIST_KEY_LSUIElement = YES` (no Dock icon; no separate Info.plist file, spec §4).
+- [x] Enable App Sandbox with only the `com.apple.security.network.client` entitlement, and enable hardened runtime. Remove the read-only user-selected files access the Xcode template enables (`ENABLE_USER_SELECTED_FILES`, spec §10).
+- [x] Create the initial source and test groups, and the test plan (spec §8).
+- [x] When the process is a unit-test host, skip the `MarketDataStore` and the single-instance check, and do not insert the menu bar item (`MenuBarExtra(isInserted:)` bound to `false`; spec §7). Verify which signal detects the host under both test plan configurations, and record it in the verification log (§9). Check: launch the Debug `.app` outside Xcode (Finder or `open`; Xcode stops the running app of the scheme before it runs tests), then run the suite with `xcodebuild test` from the terminal; it runs to the end and shows no second menu bar item. The WebSocket check comes in M1, once the app starts the client.
+- [x] Add the app icon (`AppIcon` asset; spec §11).
+- [x] Allow a single instance: quit at launch if another instance with the same bundle identifier and an earlier `launchDate` is running, excluding the current process from the list, and insert the menu bar item only after the check passes (spec §7). Keep the decision in a pure function and test it: another instance launched earlier (quit), later (stay), at the same `launchDate` or with a `nil` date (the higher `processIdentifier` quits), and only the current process in the list (stay).
+- [x] Add a `MenuBarExtra` entry point with `.menuBarExtraStyle(.window)`.
+- [x] Add a basic menu bar label and a popover placeholder with a Quit button.
+- [x] Verify that the `MenuBarExtra` label renders a composite label (status symbol, price, percentage) and honors `.monospacedDigit()`. If not, switch to a template image rendered with `ImageRenderer` (spec §6.1). Record the result in the verification log (§9).
+- [x] Expand the existing README with the development setup.
+- [x] Set signing to "Sign to Run Locally" (ad hoc) for every configuration; no Apple Developer Program membership is needed (spec §11).
+- [x] Add continuous integration: a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs the test plan, in both configurations, on every pull request to `main` and every push to `main`. Use the `macos-26` runner with Xcode 26, the oldest major version spec §4 allows, so the project keeps building with it while development uses a newer Xcode.
 
-**Exit criteria:** The app builds and launches without a Dock icon, its menu bar item opens a popover, and Quit closes the app.
+**Exit criteria:** The app builds and launches without a Dock icon, its menu bar item opens a popover, Quit closes the app, and CI passes.
 
 ### Milestone 1 — Binance WebSocket client
 
@@ -200,7 +201,7 @@ Tests, using the real client over the fake transport, clock, and random source, 
 - [ ] Confirm with Instruments (Time Profiler) that between ticker messages the app does no work besides the store's deadline task and the client's pending sleeps, with no polling (spec §12), and record CPU and memory usage in the release notes.
 - [ ] Verify no credentials, analytics, or unnecessary permissions are present.
 - [ ] Build a Universal (arm64 + x86_64) release with `xcodebuild archive -scheme BitcoinTicker -configuration Release -archivePath build/BitcoinTicker.xcarchive ONLY_ACTIVE_ARCH=NO`, and copy the `.app` out of the archive's `Products/Applications/` (the command line keeps the step scriptable; Organizer's Custom → Copy App is equivalent). Confirm both architectures with `lipo -archs "Bitcoin Ticker.app/Contents/MacOS/Bitcoin Ticker"` (`lipo` reads the binary, not the bundle). `lipo` only shows the slice is there: quit any running arm64 copy first (the single-instance check, spec §7, would quit the Rosetta launch silently), then launch it once with `arch -x86_64 "Bitcoin Ticker.app/Contents/MacOS/Bitcoin Ticker"` under Rosetta (or on an Intel Mac with macOS 14 to 26), confirm it shows the price, and record the result in the verification log (§9). Xcode 27 and macOS 27 run only on Apple silicon, so nothing else exercises the Intel slice (spec §11).
-- [ ] Confirm the release `.app` is ad hoc signed, with hardened runtime and App Sandbox (`codesign -dv --entitlements - "Bitcoin Ticker.app"`).
+- [ ] Confirm the release `.app` is ad hoc signed, with hardened runtime and App Sandbox (`codesign -dv --entitlements - "Bitcoin Ticker.app"`): flags `adhoc,runtime`, and only `com.apple.security.app-sandbox` and `com.apple.security.network.client`. Check the `.app` from the archive: a plain `xcodebuild build` of Release also carries `com.apple.security.get-task-allow`, and Debug builds have no hardened runtime (Xcode 27 turns it off there).
 - [ ] Create a DMG containing only the app and a link to `/Applications` for drag-install (`ln -s /Applications <dir>/Applications`, then `hdiutil create -volname "Bitcoin Ticker" -srcfolder <dir> -format UDZO BitcoinTicker-<version>.dmg`). Write concise installation, manual update, and uninstall instructions in the README and the release notes (uninstall: turn off Launch at login first, then delete the app and its sandbox container; verify that the container can be deleted that way, record the result in the verification log (§9), and document the steps that actually work; spec §11). Installation starts with dragging the app to `/Applications`, then covers the Gatekeeper steps for macOS 14 and macOS 15 or later (spec §11).
 - [ ] Publish the DMG as a GitHub pre-release (tag and DMG name with the `-rc.<CURRENT_PROJECT_VERSION>` suffix, spec §11), with its SHA-256 checksum in the notes, download it, check the checksum on a Mac that never built the app, and follow the installation instructions on the current macOS release (macOS 27), macOS 15, and macOS 14 (a macOS 14 virtual machine is enough). If macOS 14 cannot be tested, mark its Gatekeeper steps as unverified in the instructions.
 - [ ] On macOS 14, after installing, repeat the checks done only on the development Mac: the `MenuBarExtra` label (M0), the light/dark layout (M3), and the signal that fires on every popover open (M4). Record the result in the verification log (§9); if any differs, fix it before the release.
@@ -242,6 +243,7 @@ Do not build charts, alerts, multiple-symbol support, or additional exchange abs
 - [ ] Malformed exchange messages cannot crash the app.
 - [ ] Price and percentage formatting is centralized.
 - [ ] Core logic has automated test coverage.
+- [ ] CI passes on `main`.
 - [ ] No unnecessary third-party dependencies are introduced.
 
 ### Release
@@ -313,8 +315,8 @@ Results of the one-off manual verifications. A known limitation recorded here co
 
 | Milestone | Verification | Result | Date |
 |---|---|---|---|
-| M0 | `MenuBarExtra` label renders the composite label and honors `.monospacedDigit()`; `ImageRenderer` fallback needed? (spec §6.1) | — | — |
-| M0 | Signal that detects the unit-test host, under both test plan configurations; the suite runs to the end with no second menu bar item (spec §7) | — | — |
+| M0 | `MenuBarExtra` label renders the composite label and honors `.monospacedDigit()`; `ImageRenderer` fallback needed? (spec §6.1) | Renders the SF Symbol, price, and percentage; same width for `11,111.11` and `88,888.88`, so `.monospacedDigit()` is honored. No fallback needed. Checked on macOS 26.6.2 with Xcode 27.2, through the Debug-only `-MenuBarLabelPreview` argument | 2026-11-06 |
+| M0 | Signal that detects the unit-test host, under both test plan configurations; the suite runs to the end with no second menu bar item (spec §7) | `XCTestConfigurationFilePath` is set in both configurations (Default and Brazil). With the Debug app launched outside Xcode, `xcodebuild test` ran to the end, showed no second menu bar item, and left the running app alive | 2026-11-06 |
 | M1, M2b | Test suite opens no WebSocket connection while a Debug build runs (M1 with the client, repeated in M2b with the store; spec §7) | — | — |
 | M1 | HTTP status of a rejected upgrade readable from the task's `response` (spec §5.2) | — | — |
 | M1 | `Retry-After` readable from the task's `response` (spec §5.2) | — | — |

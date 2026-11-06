@@ -14,8 +14,14 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 
 ## Current state
 
-Planning only: no Xcode project exists yet. The next step is Milestone 0 (`docs/roadmap.md` §3).
-Update this section when a milestone is completed.
+Milestone 0 is done: menu bar shell with Quit, single-instance check, test plan, and app icon.
+The next step is Milestone 1 (`docs/roadmap.md` §3). Update this section when a milestone is
+completed.
+
+- `MenuBarView` has a Debug-only `-MenuBarLabelPreview` argument used for the M0 label check;
+  remove it when M3 renders the real label.
+- Xcode 27 turns hardened runtime off in Debug builds, and a plain `xcodebuild build` of Release
+  carries `get-task-allow`. Check signing on the archived `.app` only.
 
 ## Scope
 
@@ -67,20 +73,28 @@ Update this section when a milestone is completed.
 
 ## Commands
 
-The project does not exist yet; adjust these once M0 creates it.
+Run from the repository root. Build output and release artifacts go in `build/` (ignored by Git).
 
 ```sh
-# Run the full test plan (default + pt_BR configuration)
-xcodebuild test -scheme BitcoinTicker -testPlan BitcoinTicker
+# Build the Debug app
+xcodebuild build -project BitcoinTicker.xcodeproj -scheme BitcoinTicker -configuration Debug -derivedDataPath build/DerivedData
+
+# Run the full test plan (Default and Brazil configurations); the output is long, so keep a log
+xcodebuild test -project BitcoinTicker.xcodeproj -scheme BitcoinTicker -testPlan BitcoinTicker -derivedDataPath build/DerivedData > build/test.log 2>&1; grep -E 'Test run with|TEST (SUCCEEDED|FAILED)|✘' build/test.log
 
 # Follow the app's logs, ticker messages included
 log stream --level debug --predicate 'subsystem == "io.github.allisson.BitcoinTicker"'
 
-# Point a Debug build at a local test server
-open "build/Debug/Bitcoin Ticker.app" --args -BinanceURL ws://127.0.0.1:8080
+# Launch the Debug build; from M1 on, point it at a local test server
+open "build/DerivedData/Build/Products/Debug/Bitcoin Ticker.app" --args -BinanceURL ws://127.0.0.1:8080
 ```
 
-Build output and release artifacts go in `build/` (ignored by Git).
+The sandboxed app logs `com.apple.linkd.autoShortcut` connection errors under tests; they are
+system noise, not test failures.
+
+CI (`.github/workflows/ci.yml`) runs the same test plan with Xcode 26.6 on every pull request to
+`main`. Code must build with Xcode 26 and with the newer Xcode used locally: do not rely on
+language features or APIs that Xcode 26 lacks.
 
 ## Commits
 
