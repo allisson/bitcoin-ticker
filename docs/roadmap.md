@@ -51,26 +51,26 @@ Write the tests for each milestone in the same milestone as the code they cover.
 
 Message model and parser first (implementation order step 2):
 
-- [ ] Implement `BinanceTickerMessage`: decode, validate, and parse the required fields (spec §5.3).
-- [ ] Add tests for valid, invalid, incomplete, and unexpected-symbol payloads, for numeric strings with a garbage suffix (`"12abc"`) or a trailing newline (`"12\n"`), for the length limit (a 32-character value accepted, a 33-character value rejected), for other forms the pattern must reject (`"1e5"`, which `Decimal(string:locale:)` accepts, `"+1"`, `".5"`, `"5."`, `""`), for out-of-range values (NaN, zero or negative price, negative volume), for accepted edge values (zero volume, negative `P`), for `P` in percentage points, for a binary frame, and for parsing under a comma-decimal locale (`pt_BR`, through a test plan configuration with language Portuguese (Brazil), region Brazil, and `EXPECT_COMMA_DECIMAL=1`; the test runs only when that variable is set, and first asserts that `Locale.current.decimalSeparator` is `","`, spec §5.3).
+- [x] Implement `BinanceTickerMessage`: decode, validate, and parse the required fields (spec §5.3).
+- [x] Add tests for valid, invalid, incomplete, and unexpected-symbol payloads, for numeric strings with a garbage suffix (`"12abc"`) or a trailing newline (`"12\n"`), for the length limit (a 32-character value accepted, a 33-character value rejected), for other forms the pattern must reject (`"1e5"`, which `Decimal(string:locale:)` accepts, `"+1"`, `".5"`, `"5."`, `""`), for out-of-range values (NaN, zero or negative price, negative volume), for accepted edge values (zero volume, negative `P`), for `P` in percentage points, for a binary frame, and for parsing under a comma-decimal locale (`pt_BR`, through a test plan configuration with language Portuguese (Brazil), region Brazil, and `EXPECT_COMMA_DECIMAL=1`; the test runs only when that variable is set, and first asserts that `Locale.current.decimalSeparator` is `","`, spec §5.3).
 
 Then transport, connection, and receive loop (step 3):
 
-- [ ] Define the WebSocket transport protocol, the injectable clock, and the injectable random source (spec §5.5). The transport reports handshake completion and failure from the session delegate callbacks, not from `receive()`.
-- [ ] Write a manual test clock in the test target (no third-party package).
-- [ ] Implement `BinanceWebSocketClient` as an actor using `URLSessionWebSocketTask` behind that protocol.
-- [ ] Connect to `wss://stream.binance.com:443/ws/btcusdt@ticker`.
-- [ ] Add the Debug-only launch-argument override for the connection URL (`-BinanceURL`; spec §5.5). Release builds ignore it.
-- [ ] Start the client from the app for the development build, behind the same unit-test-host guard as the store (spec §7); M2b moves this into `MarketDataStore`. Check, with the M0 procedure (Debug app launched outside Xcode, suite run with `xcodebuild test`): the test suite opens no WebSocket connection (the test process logs no connection-state change). Record the result in the verification log (§9).
-- [ ] Implement a single, cancellable receive loop.
-- [ ] Define the connection states from spec §5.7 and surface them, with parsed ticker events, through a testable interface.
-- [ ] Map rejected handshakes by HTTP status to a connection state (spec §5.2, §5.7). Which delay follows each case is implemented in M2a.
-- [ ] Manual verification, done once and not part of the automated suite: check that the status and the `Retry-After` header are readable from the task's `response`, against a local test server on `ws://127.0.0.1` (ATS does not apply to IP addresses, so no ATS exception is needed; spec §10). Run the server as a separate process outside the app, for example a small local script: the app is sandboxed, and a listener inside it would need `com.apple.security.network.server`, which spec §10 does not allow. Point a Debug build at the server with `-BinanceURL`; the server rejects the WebSocket upgrade with 451 and with 429 plus `Retry-After` (a VPN exiting in a blocked region also works for 451). Record the result in the verification log (§9); if either is not readable, record the limitation there too (spec §5.2). The automated suite covers the mapping through the fake transport (below).
-- [ ] Verify that `URLSessionWebSocketTask` answers Binance's server pings. Keep a connection open for at least 5 minutes (pings every 20 s, pong timeout 60 s): if Binance does not close it, pongs are being sent. If it is closed, replace the transport implementation with `NWConnection` and `NWProtocolWebSocket` (`URLSessionWebSocketTask` cannot send a pong; spec §5.5) and repeat the status and `Retry-After` check above on it. Record which transport was kept in the verification log (§9).
-- [ ] Decide the endpoint at build time (spec §5.2): keep `stream.binance.com` unless it fails any of the handshake, payload, or ping/pong checks and `data-stream.binance.vision` passes all of them. Record the decision in the verification log (§9).
-- [ ] Handle malformed messages and transport errors without crashing: discard a malformed message and keep the connection open, logging only the first one per connection (spec §5.5).
-- [ ] Add structured local logging with `Logger` for actionable diagnostics, including every connection-state change at `.notice` with `privacy: .public` on the state name, and ticker messages only at `.debug`, without repeating the same failure at high frequency (spec §5.5, §9). Freshness transitions are logged by the store in M2b.
-- [ ] Add tests, with the fake transport, for the handshake status mapping: 451, 403, 429, 418, another 4xx/5xx, and an unreadable status.
+- [x] Define the WebSocket transport protocol, the injectable clock, and the injectable random source (spec §5.5). The transport reports handshake completion and failure from the session delegate callbacks, not from `receive()`.
+- [x] Write a manual test clock in the test target (no third-party package).
+- [x] Implement `BinanceWebSocketClient` as an actor using `URLSessionWebSocketTask` behind that protocol.
+- [x] Connect to `wss://stream.binance.com:443/ws/btcusdt@ticker`.
+- [x] Add the Debug-only launch-argument override for the connection URL (`-BinanceURL`; spec §5.5). Release builds ignore it.
+- [x] Start the client from the app for the development build, behind the same unit-test-host guard as the store (spec §7); M2b moves this into `MarketDataStore`. Check, with the M0 procedure (Debug app launched outside Xcode, suite run with `xcodebuild test`): the test suite opens no WebSocket connection (the test process logs no connection-state change). Record the result in the verification log (§9).
+- [x] Implement a single, cancellable receive loop.
+- [x] Define the connection states from spec §5.7 and surface them, with parsed ticker events, through a testable interface.
+- [x] Map rejected handshakes by HTTP status to a connection state (spec §5.2, §5.7). Which delay follows each case is implemented in M2a.
+- [x] Manual verification, done once and not part of the automated suite: check that the status and the `Retry-After` header are readable from the task's `response`, against a local test server on `ws://127.0.0.1` (ATS does not apply to IP addresses, so no ATS exception is needed; spec §10). Run the server as a separate process outside the app, for example a small local script: the app is sandboxed, and a listener inside it would need `com.apple.security.network.server`, which spec §10 does not allow. Point a Debug build at the server with `-BinanceURL`; the server rejects the WebSocket upgrade with 451 and with 429 plus `Retry-After` (a VPN exiting in a blocked region also works for 451). Record the result in the verification log (§9); if either is not readable, record the limitation there too (spec §5.2). The automated suite covers the mapping through the fake transport (below).
+- [x] Verify that `URLSessionWebSocketTask` answers Binance's server pings. Keep a connection open for at least 5 minutes (pings every 20 s, pong timeout 60 s): if Binance does not close it, pongs are being sent. If it is closed, replace the transport implementation with `NWConnection` and `NWProtocolWebSocket` (`URLSessionWebSocketTask` cannot send a pong; spec §5.5) and repeat the status and `Retry-After` check above on it. Record which transport was kept in the verification log (§9).
+- [x] Decide the endpoint at build time (spec §5.2): keep `stream.binance.com` unless it fails any of the handshake, payload, or ping/pong checks and `data-stream.binance.vision` passes all of them. Record the decision in the verification log (§9).
+- [x] Handle malformed messages and transport errors without crashing: discard a malformed message and keep the connection open, logging only the first one per connection (spec §5.5).
+- [x] Add structured local logging with `Logger` for actionable diagnostics, including every connection-state change at `.notice` with `privacy: .public` on the state name, and ticker messages only at `.debug`, without repeating the same failure at high frequency (spec §5.5, §9). Freshness transitions are logged by the store in M2b.
+- [x] Add tests, with the fake transport, for the handshake status mapping of 451, 403, 429, and 418; the full table, including another 4xx/5xx and an unreadable status, as a pure-function test.
 
 **Exit criteria:** Unit tests pass using a fake transport, and a development build logs live `BTCUSDT` ticker updates from Binance (at `.debug`, visible with `log stream --level debug --predicate 'subsystem == "io.github.allisson.BitcoinTicker"'`; spec §9).
 
@@ -103,6 +103,7 @@ Tests, using the fake transport, clock, and random source:
 - [ ] Minimum attempt interval: a path flapping between unavailable and available every 0.5 s, and repeated `reconnect()` calls, never start two attempts less than the interval apart; several `reconnect()` calls while an attempt waits for the interval start exactly one attempt.
 - [ ] Leaving Offline does not change k.
 - [ ] A 429 on the very first attempt giving Rate limited, not Connecting (spec §5.7).
+- [ ] A rejection with another 4xx/5xx and with an unreadable status, through the fake transport: Connecting before the first handshake, Reconnecting after, followed by the backoff delay for k.
 - [ ] `setNetworkAvailable(false)` closing a connection before the stability interval does not increment k.
 - [ ] A `reconnect()` closing a connection before the stability interval does not increment k.
 - [ ] `reconnect()` during an in-flight handshake doing nothing.
@@ -317,11 +318,11 @@ Results of the one-off manual verifications. A known limitation recorded here co
 |---|---|---|---|
 | M0 | `MenuBarExtra` label renders the composite label and honors `.monospacedDigit()`; `ImageRenderer` fallback needed? (spec §6.1) | Renders the SF Symbol, price, and percentage; same width for `11,111.11` and `88,888.88`, so `.monospacedDigit()` is honored. No fallback needed. Checked on macOS 26.6.2 with Xcode 27.2, through the Debug-only `-MenuBarLabelPreview` argument | 2026-11-06 |
 | M0 | Signal that detects the unit-test host, under both test plan configurations; the suite runs to the end with no second menu bar item (spec §7) | `XCTestConfigurationFilePath` is set in both configurations (Default and Brazil). With the Debug app launched outside Xcode, `xcodebuild test` ran to the end, showed no second menu bar item, and left the running app alive | 2026-11-06 |
-| M1, M2b | Test suite opens no WebSocket connection while a Debug build runs (M1 with the client, repeated in M2b with the store; spec §7) | — | — |
-| M1 | HTTP status of a rejected upgrade readable from the task's `response` (spec §5.2) | — | — |
-| M1 | `Retry-After` readable from the task's `response` (spec §5.2) | — | — |
-| M1 | Automatic pong: transport kept (`URLSessionWebSocketTask` or `NWConnection`) (spec §5.5) | — | — |
-| M1 | Endpoint kept (`stream.binance.com` or `data-stream.binance.vision`) (spec §5.2) | — | — |
+| M1, M2b | Test suite opens no WebSocket connection while a Debug build runs (M1 with the client, repeated in M2b with the store; spec §7) | M1: with the Debug app connected to Binance, `xcodebuild test` passed in both configurations and the app stayed alive. The test process logged only the 8 `Connecting` changes per configuration of the 8 fake-transport tests that call `start()`, none from a client started by the app. M2b: — | 2026-11-06 |
+| M1 | HTTP status of a rejected upgrade readable from the task's `response` (spec §5.2) | Readable on `URLSessionWebSocketTask`: a local server on `ws://127.0.0.1` rejecting the upgrade gave status 451 (Unavailable) and 429 (Rate limited) | 2026-11-06 |
+| M1 | `Retry-After` readable from the task's `response` (spec §5.2) | Readable: the 429 rejection carried `Retry-After: 120` and the client read `120` | 2026-11-06 |
+| M1 | Automatic pong: transport kept (`URLSessionWebSocketTask` or `NWConnection`) (spec §5.5) | `URLSessionWebSocketTask` kept: one connection to `stream.binance.com` stayed open 6 min 19 s with 372 ticker messages and no close, so pongs are sent | 2026-11-06 |
+| M1 | Endpoint kept (`stream.binance.com` or `data-stream.binance.vision`) (spec §5.2) | `stream.binance.com` kept: it passed the handshake, payload, and ping/pong checks | 2026-11-06 |
 | M3 | Layout in light and dark appearances on macOS 27, including the translucent menu bar (spec §6.5) | — | — |
 | M3 | VoiceOver reads the menu bar item and every popover value; a stale price is announced as not current (spec §6.5, §12) | — | — |
 | M4 | Signal that fires on every popover open (spec §6.3, §6.4) | — | — |
