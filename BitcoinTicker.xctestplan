@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "6B1F8E2A-3C4D-4E5F-8A9B-0C1D2E3F4A50",
+      "name" : "Default",
+      "options" : {
+
+      }
+    },
+    {
+      "id" : "6B1F8E2A-3C4D-4E5F-8A9B-0C1D2E3F4A51",
+      "name" : "Brazil",
+      "options" : {
+        "environmentVariableEntries" : [
+          {
+            "key" : "EXPECT_COMMA_DECIMAL",
+            "value" : "1"
+          }
+        ],
+        "language" : "pt-BR",
+        "region" : "BR"
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:BitcoinTicker.xcodeproj",
+        "identifier" : "B1C0000000000000000000B1",
+        "name" : "BitcoinTickerTests"
+      }
+    }
+  ],
+  "version" : 1
+}
