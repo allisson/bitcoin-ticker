@@ -92,6 +92,10 @@ open "build/DerivedData/Build/Products/Debug/Bitcoin Ticker.app" --args -Binance
 The sandboxed app logs `com.apple.linkd.autoShortcut` connection errors under tests; they are
 system noise, not test failures.
 
+CI (`.github/workflows/ci.yml`) runs the same test plan with Xcode 26.6 on every pull request to
+`main`. Code must build with Xcode 26 and with the newer Xcode used locally: do not rely on
+language features or APIs that Xcode 26 lacks.
+
 ## Commits
 
 Follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):

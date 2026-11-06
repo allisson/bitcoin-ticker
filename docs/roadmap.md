@@ -41,8 +41,9 @@ Write the tests for each milestone in the same milestone as the code they cover.
 - [x] Verify that the `MenuBarExtra` label renders a composite label (status symbol, price, percentage) and honors `.monospacedDigit()`. If not, switch to a template image rendered with `ImageRenderer` (spec §6.1). Record the result in the verification log (§9).
 - [x] Expand the existing README with the development setup.
 - [x] Set signing to "Sign to Run Locally" (ad hoc) for every configuration; no Apple Developer Program membership is needed (spec §11).
+- [ ] Add continuous integration: a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs the test plan, in both configurations, on every pull request to `main` and every push to `main`. Use the `macos-26` runner with Xcode 26, the oldest major version spec §4 allows, so the project keeps building with it while development uses a newer Xcode.
 
-**Exit criteria:** The app builds and launches without a Dock icon, its menu bar item opens a popover, and Quit closes the app.
+**Exit criteria:** The app builds and launches without a Dock icon, its menu bar item opens a popover, Quit closes the app, and CI passes.
 
 ### Milestone 1 — Binance WebSocket client
 
@@ -242,6 +243,7 @@ Do not build charts, alerts, multiple-symbol support, or additional exchange abs
 - [ ] Malformed exchange messages cannot crash the app.
 - [ ] Price and percentage formatting is centralized.
 - [ ] Core logic has automated test coverage.
+- [ ] CI passes on `main`.
 - [ ] No unnecessary third-party dependencies are introduced.
 
 ### Release
