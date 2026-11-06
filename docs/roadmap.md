@@ -82,43 +82,43 @@ In the client (`BinanceWebSocketClient`, spec §7):
 
 Implement each rule of spec §5.5, with every interval injectable:
 
-- [ ] Handshake timeout.
-- [ ] Backoff with full jitter.
-- [ ] Fixed delay after 451/403/429/418, including `Retry-After`, the reset of k, and its behavior while Offline.
-- [ ] Minimum attempt interval between attempt starts.
-- [ ] Backoff reset once the connection is stable.
-- [ ] Single connection and receive loop; messages from a closed or replaced connection are discarded.
-- [ ] `reconnect()` and `setNetworkAvailable(_:)`.
-- [ ] Unavailable and Rate limited kept during the attempt after their fixed delay (spec §5.7).
-- [ ] Cancellation: closing the client cancels the connection, the receive loop, and every pending delay.
+- [x] Handshake timeout.
+- [x] Backoff with full jitter.
+- [x] Fixed delay after 451/403/429/418, including `Retry-After`, the reset of k, and its behavior while Offline.
+- [x] Minimum attempt interval between attempt starts.
+- [x] Backoff reset once the connection is stable.
+- [x] Single connection and receive loop; messages from a closed or replaced connection are discarded.
+- [x] `reconnect()` and `setNetworkAvailable(_:)`.
+- [x] Unavailable and Rate limited kept during the attempt after their fixed delay (spec §5.7).
+- [x] Cancellation: closing the client cancels the connection, the receive loop, and every pending delay.
 
 Tests, using the fake transport, clock, and random source:
 
-- [ ] State transitions, including Connecting for the first attempt after starting Offline and for retries (and their backoff wait) before the first handshake.
-- [ ] `setNetworkAvailable(true)` leaving Offline and starting an attempt (Connecting before the first handshake, Reconnecting after).
-- [ ] A 451 on the first attempt, then Offline, then the path returning during the fixed delay: the state is Unavailable, not Connecting.
-- [ ] A fixed delay that ends while Offline, then the path returning before the following attempt has run (spec §5.5, §5.7): Unavailable after a 451 on the first attempt, Rate limited after a 429 on the first attempt, never Connecting.
-- [ ] `setNetworkAvailable(false)` during an in-flight handshake: the attempt is abandoned and the state is Offline.
-- [ ] `reconnect()` during a pending backoff delay starting an attempt as soon as the minimum attempt interval allows, without incrementing k.
-- [ ] Minimum attempt interval: a path flapping between unavailable and available every 0.5 s, and repeated `reconnect()` calls, never start two attempts less than the interval apart; several `reconnect()` calls while an attempt waits for the interval start exactly one attempt.
-- [ ] Leaving Offline does not change k.
-- [ ] A 429 on the very first attempt giving Rate limited, not Connecting (spec §5.7).
-- [ ] A rejection with another 4xx/5xx and with an unreadable status, through the fake transport: Connecting before the first handshake, Reconnecting after, followed by the backoff delay for k.
-- [ ] `setNetworkAvailable(false)` closing a connection before the stability interval does not increment k.
-- [ ] A `reconnect()` closing a connection before the stability interval does not increment k.
-- [ ] `reconnect()` during an in-flight handshake doing nothing.
-- [ ] `reconnect()` during a pending fixed delay not shortening it.
-- [ ] The fixed delay counting through Offline, and the previous state restored when the path returns.
-- [ ] Handshake timeout.
-- [ ] Unavailable kept during the retry after a 451/403 fixed delay, and Rate limited during the retry after a 429/418 one; a 429/418 on the retry after a 451/403 delay giving Rate limited with a new fixed delay, and a 451/403 on the retry after a 429/418 delay giving Unavailable.
-- [ ] Backoff bounds and reset; no reset when a connection delivers a message and closes before the stability interval (k keeps growing).
-- [ ] Fixed delay with, without, with a non-numeric, with a shorter-than-60 s (waits 60 s), with a longer-than-3-days (waits 3 days), and with a digits-only value too large for an integer (waits 3 days) `Retry-After`.
-- [ ] Backoff from k = 1 when the attempt after a 451/403 or a 429/418 fixed delay fails for another reason, and when it connects and closes before the stability interval (k was above 1 before the delay).
-- [ ] A server close after a stable connection (Binance's 24-hour close) reconnecting after the k = 1 backoff delay (at most 1 s).
-- [ ] Cancellation.
-- [ ] Absence of duplicate connections.
-- [ ] A message delivered by a connection after it was closed or replaced emits no ticker event.
-- [ ] A malformed message (invalid JSON, binary frame, unexpected symbol) emits no ticker event and does not close the connection; repeated malformed messages log once per connection.
+- [x] State transitions, including Connecting for the first attempt after starting Offline and for retries (and their backoff wait) before the first handshake.
+- [x] `setNetworkAvailable(true)` leaving Offline and starting an attempt (Connecting before the first handshake, Reconnecting after).
+- [x] A 451 on the first attempt, then Offline, then the path returning during the fixed delay: the state is Unavailable, not Connecting.
+- [x] A fixed delay that ends while Offline, then the path returning before the following attempt has run (spec §5.5, §5.7): Unavailable after a 451 on the first attempt, Rate limited after a 429 on the first attempt, never Connecting.
+- [x] `setNetworkAvailable(false)` during an in-flight handshake: the attempt is abandoned and the state is Offline.
+- [x] `reconnect()` during a pending backoff delay starting an attempt as soon as the minimum attempt interval allows, without incrementing k.
+- [x] Minimum attempt interval: a path flapping between unavailable and available every 0.5 s, and repeated `reconnect()` calls, never start two attempts less than the interval apart; several `reconnect()` calls while an attempt waits for the interval start exactly one attempt.
+- [x] Leaving Offline does not change k.
+- [x] A 429 on the very first attempt giving Rate limited, not Connecting (spec §5.7).
+- [x] A rejection with another 4xx/5xx and with an unreadable status, through the fake transport: Connecting before the first handshake, Reconnecting after, followed by the backoff delay for k.
+- [x] `setNetworkAvailable(false)` closing a connection before the stability interval does not increment k.
+- [x] A `reconnect()` closing a connection before the stability interval does not increment k.
+- [x] `reconnect()` during an in-flight handshake doing nothing.
+- [x] `reconnect()` during a pending fixed delay not shortening it.
+- [x] The fixed delay counting through Offline, and the previous state restored when the path returns.
+- [x] Handshake timeout.
+- [x] Unavailable kept during the retry after a 451/403 fixed delay, and Rate limited during the retry after a 429/418 one; a 429/418 on the retry after a 451/403 delay giving Rate limited with a new fixed delay, and a 451/403 on the retry after a 429/418 delay giving Unavailable.
+- [x] Backoff bounds and reset; no reset when a connection delivers a message and closes before the stability interval (k keeps growing).
+- [x] Fixed delay with, without, with a non-numeric, with a shorter-than-60 s (waits 60 s), with a longer-than-3-days (waits 3 days), and with a digits-only value too large for an integer (waits 3 days) `Retry-After`.
+- [x] Backoff from k = 1 when the attempt after a 451/403 or a 429/418 fixed delay fails for another reason, and when it connects and closes before the stability interval (k was above 1 before the delay).
+- [x] A server close after a stable connection (Binance's 24-hour close) reconnecting after the k = 1 backoff delay (at most 1 s).
+- [x] Cancellation.
+- [x] Absence of duplicate connections.
+- [x] A message delivered by a connection after it was closed or replaced emits no ticker event.
+- [x] A malformed message (invalid JSON, binary frame, unexpected symbol) emits no ticker event and does not close the connection; repeated malformed messages log once per connection.
 
 **Exit criteria:** The client handles disconnects (including the 24-hour close), rejections, and network loss predictably, without duplicate connections or tight reconnect loops, and all of it is covered by tests.
 
