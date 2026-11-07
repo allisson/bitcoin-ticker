@@ -46,6 +46,13 @@ final class ManualClock: Clock, @unchecked Sendable {
         }
     }
 
+    /// Deadlines of the pending sleepers, as offsets from the clock's start.
+    var deadlines: [Duration] { lock.withLock { sleepers.values.map(\.deadline.offset).sorted() } }
+
+    func advance(to offset: Duration) {
+        advance(by: offset - now.offset)
+    }
+
     func advance(by duration: Duration) {
         let due: [Sleeper] = lock.withLock {
             current = current.advanced(by: duration)

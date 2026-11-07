@@ -14,14 +14,15 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 
 ## Current state
 
-Milestones 0 and 1 are done: menu bar shell with Quit, single-instance check, test plan, app
-icon, ticker parser, and a single-attempt WebSocket client. The next step is Milestone 2a
-(`docs/roadmap.md` §3). Update this section when a milestone is completed.
+Milestones 0, 1, and 2a are done: menu bar shell with Quit, single-instance check, test plan,
+app icon, ticker parser, and the WebSocket client with every retry rule of spec §5.5. The next
+step is Milestone 2b (`docs/roadmap.md` §3). Update this section when a milestone is completed.
 
-- The client makes one connection attempt and never reconnects; M2a adds retries, backoff, and
-  fixed delays.
 - `BitcoinTickerApp` starts the client and drains its events directly; M2b moves this into
   `MarketDataStore`.
+- Client tests use `ClientHarness` (`BinanceWebSocketClientTests.swift`): wait for a sleeper with
+  `hasSleeper(at:)` or for a state with `nextState()` before advancing the manual clock, or the
+  test races the client.
 
 - `MenuBarView` has a Debug-only `-MenuBarLabelPreview` argument used for the M0 label check;
   remove it when M3 renders the real label.
