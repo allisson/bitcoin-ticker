@@ -15,7 +15,7 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 ## Current state
 
 All milestones (0 to 5) are done and v1.0.0 is published on GitHub Releases. By maintainer
-decision, the 24-hour run was replaced by a periodic-close check, and nothing was verified on
+decision, the 24-hour run was dropped for a periodic-close check, and nothing was verified on
 macOS 14, 15, or 27 (`docs/roadmap.md` §9). New work starts from `docs/roadmap.md` §7 (post-v1
 backlog) only with the maintainer's approval.
 Update this section when a milestone is completed.
@@ -145,7 +145,7 @@ Release tags follow spec §11 (`v1.0.0`, `v1.0.0-rc.2`), not the commit types.
   step, and write tests in the same step as the code.
 - Tick the roadmap checkboxes as items are done, and fill the verification log (`docs/roadmap.md`
   §9) for every manual check. Never mark an item done without running or verifying it.
-- Manual checks that need hardware, other macOS versions, VoiceOver, or a 25-hour run: say they are
+- Manual checks that need hardware, other macOS versions, or VoiceOver: say they are
   pending instead of guessing a result.
 - Ask before decisions that change architecture or user-visible behavior.
 - Nothing leaves the machine without approval: no `git push`, tags, GitHub Releases, or pull
