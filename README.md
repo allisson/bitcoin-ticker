@@ -3,13 +3,15 @@
 A small, native macOS menu bar app that shows the live Bitcoin price for the Binance Spot
 `BTCUSDT` market, with its 24-hour change:
 
-```text
-₿ 67,432.18  +2.45%
-```
+<img src="docs/images/menu-bar.png" width="163" alt="Menu bar item showing ₿ 75,854.01 −0.07%">
 
 Click it for the 24-hour high, low, and volume, the connection status, the last update time, two
 preferences (Launch at login, Show 24h change in menu bar), and Quit. The app has no Dock icon and
 no main window.
+
+<img src="docs/images/popover.png" width="306" alt="Popover with BTC / USDT on Binance Spot: price 75,864.52, change −0.06%, 24-hour high, low, and volume, status Live, last update time, the two preference checkboxes, and the Quit button">
+
+Screenshots: macOS 26, dark appearance, English (United States) number format.
 
 **The app displays exchange-provided market data. It is not a trading or investment service, and
 nothing it shows is financial advice.**
