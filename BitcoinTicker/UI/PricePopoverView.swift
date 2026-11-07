@@ -19,7 +19,9 @@ struct PricePopoverView: View {
             HStack(alignment: .firstTextBaseline) {
                 Text(ticker.map { formatter.price($0.lastPrice) } ?? "—")
                     .font(.title2.weight(.semibold))
-                    .accessibilityLabel(ticker.map { "Price \(formatter.price($0.lastPrice))" } ?? "Price, no data yet")
+                    .accessibilityLabel(ticker.map {
+                        "\(store.freshness == .stale ? "Price not current:" : "Price") \(formatter.price($0.lastPrice))"
+                    } ?? "Price, no data yet")
                 Spacer()
                 Text(ticker.map { formatter.change($0.priceChangePercent) } ?? "—")
                     .foregroundStyle(changeColor(ticker?.priceChangePercent))
@@ -38,9 +40,11 @@ struct PricePopoverView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(StatusText.status(store.connectionState, store.freshness))
+                    .fixedSize(horizontal: false, vertical: true) // wrap the longer statuses
                 if let note = StatusText.note(store.freshness) {
                     Label(note, systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 // shortcut: re-evaluated only when the view re-renders; M4 re-evaluates on every popover open (spec §6.4).
                 Text("Last update: \(store.lastUpdate.map { formatter.updateTime($0, now: Date()) } ?? "—")")
