@@ -4,6 +4,8 @@ import SwiftUI
 struct BitcoinTickerApp: App {
     /// False in a unit-test host, so tests never show a menu bar item (spec §7).
     @State private var isMenuBarItemInserted: Bool
+    /// `nil` in a unit-test host (spec §7). M3 passes it to the views.
+    @State private var store: MarketDataStore<ContinuousClock>?
 
     @MainActor
     init() {
@@ -16,14 +18,21 @@ struct BitcoinTickerApp: App {
             exit(0)
         }
         _isMenuBarItemInserted = State(initialValue: true)
-        // shortcut: the task keeps the client alive and drains its events; M2b moves this into MarketDataStore.
+        let clock = ContinuousClock()
         let client = BinanceWebSocketClient(
             url: BinanceEndpoint.url, transport: URLSessionWebSocketTransport(),
-            clock: ContinuousClock(), random: SystemRandomSource()
+            clock: clock, random: SystemRandomSource()
         )
-        Task {
-            await client.start()
-            for await _ in client.events {}
+        let store = MarketDataStore(
+            client: client, clock: clock, now: Date.init,
+            pathSource: SystemNetworkPathSource(), wakeSource: SystemWakeSource()
+        )
+        store.start()
+        _store = State(initialValue: store)
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.willTerminateNotification, object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated { store.stop() }
         }
     }
 
