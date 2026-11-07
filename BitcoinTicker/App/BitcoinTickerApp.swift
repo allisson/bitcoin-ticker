@@ -4,20 +4,11 @@ import SwiftUI
 struct BitcoinTickerApp: App {
     /// False in a unit-test host, so tests never show a menu bar item (spec §7).
     @State private var isMenuBarItemInserted: Bool
-    /// `nil` in a unit-test host (spec §7). M3 passes it to the views.
-    @State private var store: MarketDataStore<ContinuousClock>?
+    /// Created in every process but started only outside a unit-test host (spec §7).
+    @State private var store: MarketDataStore<ContinuousClock>
 
     @MainActor
     init() {
-        if TestHost.isActive {
-            _isMenuBarItemInserted = State(initialValue: false)
-            return
-        }
-        // Runs before the scene exists, so a copy that quits never shows a second item.
-        if SingleInstance.shouldQuitAtLaunch() {
-            exit(0)
-        }
-        _isMenuBarItemInserted = State(initialValue: true)
         let clock = ContinuousClock()
         let client = BinanceWebSocketClient(
             url: BinanceEndpoint.url, transport: URLSessionWebSocketTransport(),
@@ -27,8 +18,17 @@ struct BitcoinTickerApp: App {
             client: client, clock: clock, now: Date.init,
             pathSource: SystemNetworkPathSource(), wakeSource: SystemWakeSource()
         )
-        store.start()
         _store = State(initialValue: store)
+        if TestHost.isActive {
+            _isMenuBarItemInserted = State(initialValue: false)
+            return
+        }
+        // Runs before the scene exists, so a copy that quits never shows a second item.
+        if SingleInstance.shouldQuitAtLaunch() {
+            exit(0)
+        }
+        _isMenuBarItemInserted = State(initialValue: true)
+        store.start()
         NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification, object: nil, queue: .main
         ) { _ in
@@ -38,9 +38,9 @@ struct BitcoinTickerApp: App {
 
     var body: some Scene {
         MenuBarExtra(isInserted: $isMenuBarItemInserted) {
-            PricePopoverView()
+            PricePopoverView(store: store)
         } label: {
-            MenuBarView()
+            MenuBarView(store: store)
         }
         .menuBarExtraStyle(.window)
     }
