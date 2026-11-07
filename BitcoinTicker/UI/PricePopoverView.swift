@@ -1,8 +1,12 @@
 import SwiftUI
 
-/// Popover: market summary, status, last update, and Quit (spec §6.2). M4 adds the two toggles.
+/// Popover: market summary, status, last update, the two preferences, and Quit (spec §6.2, §6.3).
 struct PricePopoverView: View {
     let store: MarketDataStore<ContinuousClock>
+    let launchAtLogin: LaunchAtLogin
+    @AppStorage(PreferenceKey.showChange) private var showChange = true
+    /// Set on every popover open, so the last-update date prefix is re-evaluated (spec §6.4).
+    @State private var now = Date()
 
     var body: some View {
         let formatter = PriceFormatter()
@@ -46,12 +50,28 @@ struct PricePopoverView: View {
                         .foregroundStyle(.orange)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                // shortcut: re-evaluated only when the view re-renders; M4 re-evaluates on every popover open (spec §6.4).
-                Text("Last update: \(store.lastUpdate.map { formatter.updateTime($0, now: Date()) } ?? "—")")
+                Text("Last update: \(store.lastUpdate.map { formatter.updateTime($0, now: now) } ?? "—")")
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
             }
             .font(.callout)
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 4) {
+                Toggle("Launch at login", isOn: Binding(
+                    get: { launchAtLogin.isEnabled },
+                    set: { launchAtLogin.setEnabled($0) }
+                ))
+                if let message = launchAtLogin.message {
+                    Text(message)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Toggle("Show 24h change in menu bar", isOn: $showChange)
+            }
+            .toggleStyle(.checkbox)
 
             Divider()
 
@@ -62,6 +82,11 @@ struct PricePopoverView: View {
         }
         .padding()
         .frame(width: 260, alignment: .leading)
+        // Fires on every popover open on macOS 26.6.2 (roadmap §9); `didBecomeKey` misses the first.
+        .onAppear {
+            now = Date()
+            launchAtLogin.refresh()
+        }
     }
 
     private func row(_ title: String, _ value: String?) -> some View {

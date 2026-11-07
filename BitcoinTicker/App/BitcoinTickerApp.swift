@@ -6,6 +6,7 @@ struct BitcoinTickerApp: App {
     @State private var isMenuBarItemInserted: Bool
     /// Created in every process but started only outside a unit-test host (spec §7).
     @State private var store: MarketDataStore<ContinuousClock>
+    @State private var launchAtLogin = LaunchAtLogin()
 
     @MainActor
     init() {
@@ -38,7 +39,7 @@ struct BitcoinTickerApp: App {
 
     var body: some Scene {
         MenuBarExtra(isInserted: $isMenuBarItemInserted) {
-            PricePopoverView(store: store)
+            PricePopoverView(store: store, launchAtLogin: launchAtLogin)
         } label: {
             MenuBarView(store: store)
         }
