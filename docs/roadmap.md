@@ -128,30 +128,30 @@ Tests, using the fake transport, clock, and random source:
 
 In the store (`MarketDataStore`, spec §7):
 
-- [ ] Implement `MarketDataStore` (`@MainActor`, `@Observable`; spec §7), with connection state and data freshness as separate dimensions (spec §5.7).
-- [ ] Receive times on the injected clock and wall-clock `now` source, and the centralized freshness threshold (spec §5.6).
-- [ ] Connection watchdog (spec §5.6).
-- [ ] One long-lived deadline task, which waits for a store signal when no deadline is pending (spec §5.6).
-- [ ] Path and wake sources behind small protocols, calling `client.setNetworkAvailable(_:)` and `client.reconnect()` per spec §5.5.
-- [ ] Log every data-freshness transition (spec §9).
-- [ ] Shutdown and task cancellation.
-- [ ] Repeat the M1 test-host check now that the store starts the client, with the M0 procedure: the test suite opens no WebSocket connection (spec §7). Record the result in the verification log (§9).
+- [x] Implement `MarketDataStore` (`@MainActor`, `@Observable`; spec §7), with connection state and data freshness as separate dimensions (spec §5.7).
+- [x] Receive times on the injected clock and wall-clock `now` source, and the centralized freshness threshold (spec §5.6).
+- [x] Connection watchdog (spec §5.6).
+- [x] One long-lived deadline task, which waits for a store signal when no deadline is pending (spec §5.6).
+- [x] Path and wake sources behind small protocols, calling `client.setNetworkAvailable(_:)` and `client.reconnect()` per spec §5.5.
+- [x] Log every data-freshness transition (spec §9).
+- [x] Shutdown and task cancellation.
+- [x] Repeat the M1 test-host check now that the store starts the client, with the M0 procedure: the test suite opens no WebSocket connection (spec §7). Record the result in the verification log (§9).
 
 Tests, using the real client over the fake transport, clock, and random source, plus fake path/wake sources:
 
-- [ ] Freshness, including Live turning Stale with no further messages, and Stale right after a clock jump that stands in for sleep.
-- [ ] Watchdog on an established connection that delivered messages and then went silent: one reconnect, k unchanged.
-- [ ] Watchdog: no reconnect right after a handshake that follows a long outage; a reconnect when a new connection never sends data.
-- [ ] Price staying Live through a 24-hour close followed by a reconnect within the threshold.
-- [ ] Deadline task with nothing pending: the first handshake since launch, and a handshake after the data has turned Stale, followed by silence, each produce one watchdog reconnect.
-- [ ] No watchdog reconnect while Connecting, Reconnecting, Rate limited, Unavailable, or Offline.
-- [ ] Path return and wake not shortening a fixed delay.
-- [ ] No reconnect on the initial satisfied path report or on an interface change.
-- [ ] An initial unsatisfied path report, and a later path loss, each giving Offline.
-- [ ] Wake while Connected calling `client.reconnect()`.
-- [ ] A `.requiresConnection` path counts as available: no Offline, attempts continue (spec §5.5).
-- [ ] Wake while Offline starting no attempt.
-- [ ] Shutdown cancelling the deadline task and the client.
+- [x] Freshness, including Live turning Stale with no further messages, and Stale right after a clock jump that stands in for sleep.
+- [x] Watchdog on an established connection that delivered messages and then went silent: one reconnect, k unchanged.
+- [x] Watchdog: no reconnect right after a handshake that follows a long outage; a reconnect when a new connection never sends data.
+- [x] Price staying Live through a 24-hour close followed by a reconnect within the threshold.
+- [x] Deadline task with nothing pending: the first handshake since launch, and a handshake after the data has turned Stale, followed by silence, each produce one watchdog reconnect.
+- [x] No watchdog reconnect while Connecting, Reconnecting, Rate limited, Unavailable, or Offline.
+- [x] Path return and wake not shortening a fixed delay.
+- [x] No reconnect on the initial satisfied path report or on an interface change.
+- [x] An initial unsatisfied path report, and a later path loss, each giving Offline.
+- [x] Wake while Connected calling `client.reconnect()`.
+- [x] A `.requiresConnection` path counts as available: no Offline, attempts continue (spec §5.5).
+- [x] Wake while Offline starting no attempt.
+- [x] Shutdown cancelling the deadline task and the client.
 
 **Exit criteria:** The store handles half-open connections, stale data, network-path changes, and wake predictably, without bypassing a fixed delay, and all of it is covered by tests.
 
@@ -318,7 +318,7 @@ Results of the one-off manual verifications. A known limitation recorded here co
 |---|---|---|---|
 | M0 | `MenuBarExtra` label renders the composite label and honors `.monospacedDigit()`; `ImageRenderer` fallback needed? (spec §6.1) | Renders the SF Symbol, price, and percentage; same width for `11,111.11` and `88,888.88`, so `.monospacedDigit()` is honored. No fallback needed. Checked on macOS 26.6.2 with Xcode 27.2, through the Debug-only `-MenuBarLabelPreview` argument | 2026-11-06 |
 | M0 | Signal that detects the unit-test host, under both test plan configurations; the suite runs to the end with no second menu bar item (spec §7) | `XCTestConfigurationFilePath` is set in both configurations (Default and Brazil). With the Debug app launched outside Xcode, `xcodebuild test` ran to the end, showed no second menu bar item, and left the running app alive | 2026-11-06 |
-| M1, M2b | Test suite opens no WebSocket connection while a Debug build runs (M1 with the client, repeated in M2b with the store; spec §7) | M1: with the Debug app connected to Binance, `xcodebuild test` passed in both configurations and the app stayed alive. The test process logged only the 8 `Connecting` changes per configuration of the 8 fake-transport tests that call `start()`, none from a client started by the app. M2b: — | 2026-11-06 |
+| M1, M2b | Test suite opens no WebSocket connection while a Debug build runs (M1 with the client, repeated in M2b with the store; spec §7) | M1: with the Debug app connected to Binance, `xcodebuild test` passed in both configurations and the app stayed alive. The test process logged only the 8 `Connecting` changes per configuration of the 8 fake-transport tests that call `start()`, none from a client started by the app. M2b: with the Debug app connected to Binance, `xcodebuild test` passed in both configurations (68 tests) and the app stayed alive. The test processes logged no `com.apple.network` or `com.apple.CFNetwork` message (the app process logged 235 in the same window), so no store or URLSession transport ran in the test host | 2026-11-06 |
 | M1 | HTTP status of a rejected upgrade readable from the task's `response` (spec §5.2) | Readable on `URLSessionWebSocketTask`: a local server on `ws://127.0.0.1` rejecting the upgrade gave status 451 (Unavailable) and 429 (Rate limited) | 2026-11-06 |
 | M1 | `Retry-After` readable from the task's `response` (spec §5.2) | Readable: the 429 rejection carried `Retry-After: 120` and the client read `120` | 2026-11-06 |
 | M1 | Automatic pong: transport kept (`URLSessionWebSocketTask` or `NWConnection`) (spec §5.5) | `URLSessionWebSocketTask` kept: one connection to `stream.binance.com` stayed open 6 min 19 s with 372 ticker messages and no close, so pongs are sent | 2026-11-06 |

@@ -14,15 +14,18 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 
 ## Current state
 
-Milestones 0, 1, and 2a are done: menu bar shell with Quit, single-instance check, test plan,
-app icon, ticker parser, and the WebSocket client with every retry rule of spec §5.5. The next
-step is Milestone 2b (`docs/roadmap.md` §3). Update this section when a milestone is completed.
+Milestones 0, 1, 2a, and 2b are done: menu bar shell with Quit, single-instance check, test plan,
+app icon, ticker parser, the WebSocket client with every retry rule of spec §5.5, and
+`MarketDataStore` with freshness, watchdog, path, and wake. The next step is Milestone 3
+(`docs/roadmap.md` §3). Update this section when a milestone is completed.
 
-- `BitcoinTickerApp` starts the client and drains its events directly; M2b moves this into
-  `MarketDataStore`.
-- Client tests use `ClientHarness` (`BinanceWebSocketClientTests.swift`): wait for a sleeper with
-  `hasSleeper(at:)` or for a state with `nextState()` before advancing the manual clock, or the
-  test races the client.
+- `BitcoinTickerApp` creates and starts the store and keeps it in `@State`; M3 passes it to the
+  views.
+- Client tests use `ClientHarness` (`BinanceWebSocketClientTests.swift`) and store tests use
+  `StoreHarness` (`MarketDataStoreTests.swift`): wait for a sleeper with `hasSleeper(at:)` or for a
+  state before advancing the manual clock, or the test races the code under test.
+- `xcodebuild build` of Debug drops the test bundle from the app, so run `xcodebuild test` (not
+  `test-without-building`) after it.
 
 - `MenuBarView` has a Debug-only `-MenuBarLabelPreview` argument used for the M0 label check;
   remove it when M3 renders the real label.
