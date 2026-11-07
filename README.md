@@ -45,8 +45,8 @@ macOS 14 (Sonoma) or later, on Apple silicon or Intel.
      Move to Trash), open System Settings → Privacy & Security, scroll down, and click **Open
      Anyway** next to the message about Bitcoin Ticker, then confirm with your password or Touch
      ID. The button is offered for about an hour after the blocked launch; if it is gone, open the
-     app again first.
-   - **macOS 14:** right-click (or Control-click) the app in Applications, choose **Open**, then
+     app again first. (Tested on macOS 26.)
+   - **macOS 14 (not tested):** right-click (or Control-click) the app in Applications, choose **Open**, then
      **Open** again.
    - **Advanced alternative:** `xattr -dr com.apple.quarantine "/Applications/Bitcoin Ticker.app"`
      in Terminal removes the quarantine flag, so the warning is not shown.
@@ -94,7 +94,8 @@ for 30 seconds. The app reconnects on its own; the popover shows what it is doin
 - Only Binance Spot `BTCUSDT`, in USDT. No other pairs, exchanges, charts, or alerts.
 - Not available where Binance does not serve the network or region.
 - Signed ad hoc, not notarized: every install and update needs the Gatekeeper steps above.
-- The Intel build has been tested only under Rosetta on Apple silicon.
+- Tested on macOS 26 (Apple silicon), and the Intel build only under Rosetta. Not tested on
+  macOS 14, 15, or 27.
 
 ## Development
 
