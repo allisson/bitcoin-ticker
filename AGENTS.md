@@ -14,11 +14,10 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 
 ## Current state
 
-Milestones 0 to 4 are done: menu bar shell with Quit, single-instance check, test plan, app icon,
-ticker parser, the WebSocket client with every retry rule of spec §5.5, `MarketDataStore` with
-freshness, watchdog, path, and wake, the menu bar label and popover, and the two preference
-toggles. The M3 layout check on macOS 27 is pending (`docs/roadmap.md` §9). The next step is
-Milestone 5 (`docs/roadmap.md` §3).
+All milestones (0 to 5) are done and v1.0.0 is published on GitHub Releases. By maintainer
+decision, the 24-hour run was replaced by a periodic-close check, and nothing was verified on
+macOS 14, 15, or 27 (`docs/roadmap.md` §9). New work starts from `docs/roadmap.md` §7 (post-v1
+backlog) only with the maintainer's approval.
 Update this section when a milestone is completed.
 
 - `BitcoinTickerApp` creates the store in every process and starts it only outside a unit-test

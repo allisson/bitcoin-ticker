@@ -3,13 +3,15 @@
 A small, native macOS menu bar app that shows the live Bitcoin price for the Binance Spot
 `BTCUSDT` market, with its 24-hour change:
 
-```text
-₿ 67,432.18  +2.45%
-```
+<img src="docs/images/menu-bar.png" width="163" alt="Menu bar item showing ₿ 75,854.01 −0.07%">
 
 Click it for the 24-hour high, low, and volume, the connection status, the last update time, two
 preferences (Launch at login, Show 24h change in menu bar), and Quit. The app has no Dock icon and
 no main window.
+
+<img src="docs/images/popover.png" width="306" alt="Popover with BTC / USDT on Binance Spot: price 75,864.52, change −0.06%, 24-hour high, low, and volume, status Live, last update time, the two preference checkboxes, and the Quit button">
+
+Screenshots: macOS 26, dark appearance, English (United States) number format.
 
 **The app displays exchange-provided market data. It is not a trading or investment service, and
 nothing it shows is financial advice.**
@@ -45,8 +47,8 @@ macOS 14 (Sonoma) or later, on Apple silicon or Intel.
      Move to Trash), open System Settings → Privacy & Security, scroll down, and click **Open
      Anyway** next to the message about Bitcoin Ticker, then confirm with your password or Touch
      ID. The button is offered for about an hour after the blocked launch; if it is gone, open the
-     app again first.
-   - **macOS 14:** right-click (or Control-click) the app in Applications, choose **Open**, then
+     app again first. (Tested on macOS 26.)
+   - **macOS 14 (not tested):** right-click (or Control-click) the app in Applications, choose **Open**, then
      **Open** again.
    - **Advanced alternative:** `xattr -dr com.apple.quarantine "/Applications/Bitcoin Ticker.app"`
      in Terminal removes the quarantine flag, so the warning is not shown.
@@ -94,7 +96,8 @@ for 30 seconds. The app reconnects on its own; the popover shows what it is doin
 - Only Binance Spot `BTCUSDT`, in USDT. No other pairs, exchanges, charts, or alerts.
 - Not available where Binance does not serve the network or region.
 - Signed ad hoc, not notarized: every install and update needs the Gatekeeper steps above.
-- The Intel build has been tested only under Rosetta on Apple silicon.
+- Tested on macOS 26 (Apple silicon), and the Intel build only under Rosetta. Not tested on
+  macOS 14, 15, or 27.
 
 ## Development
 
