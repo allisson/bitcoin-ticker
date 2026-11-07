@@ -159,22 +159,22 @@ Tests, using the real client over the fake transport, clock, and random source, 
 
 **Estimate:** 1–2 days
 
-- [ ] Implement `PriceFormatter` per spec §6.4, with tests in a pinned locale: `P` not multiplied by 100, the sign prefixed by the formatter code (U+2212 for negatives, never the locale's own sign), `"-0.004"` shown as `0.00%` without a sign, half-away-from-zero rounding (`"-2.455"` → `−2.46%`), locale-aware grouping (including a comma-decimal locale, where the change reads `+2,45%`), volume with 0 decimals and ` BTC` after a space, and the update time with seconds in a 12-hour locale (`en_US`) and a 24-hour locale (`en_GB`), with the date prefix when the update is not from today (injected `now`). Tests cannot change the user's 12/24-hour setting, so the locale stands in for it. Pin the time zone and calendar too, and cover an update shortly before midnight checked shortly after it.
-- [ ] Implement the status text as a pure function of connection state and data freshness (spec §6.2), with a table test covering every row of the spec's status table and the stale note.
-- [ ] Implement the compact menu bar label with monospaced digits.
-- [ ] Display the latest BTC/USDT price.
-- [ ] Display the 24-hour percentage change with an explicit sign (no color in the menu bar; spec §6.1).
-- [ ] Show the stale status symbol in the menu bar itself, and a placeholder before the first price.
-- [ ] Implement the popover market summary.
-- [ ] Display 24-hour high, low, and BTC volume, with `—` for every market value before the first price (spec §6.2).
-- [ ] Display Binance Spot market identity.
-- [ ] Display connection state and data freshness with the status text from spec §6.2, and the last successful update time.
-- [ ] Implement the Connecting, Reconnecting, Rate limited, Offline, Unavailable, and stale presentations (spec §6.2).
+- [x] Implement `PriceFormatter` per spec §6.4, with tests in a pinned locale: `P` not multiplied by 100, the sign prefixed by the formatter code (U+2212 for negatives, never the locale's own sign), `"-0.004"` shown as `0.00%` without a sign, half-away-from-zero rounding (`"-2.455"` → `−2.46%`), locale-aware grouping (including a comma-decimal locale, where the change reads `+2,45%`), volume with 0 decimals and ` BTC` after a space, and the update time with seconds in a 12-hour locale (`en_US`) and a 24-hour locale (`en_GB`), with the date prefix when the update is not from today (injected `now`). Tests cannot change the user's 12/24-hour setting, so the locale stands in for it. Pin the time zone and calendar too, and cover an update shortly before midnight checked shortly after it.
+- [x] Implement the status text as a pure function of connection state and data freshness (spec §6.2), with a table test covering every row of the spec's status table and the stale note.
+- [x] Implement the compact menu bar label with monospaced digits.
+- [x] Display the latest BTC/USDT price.
+- [x] Display the 24-hour percentage change with an explicit sign (no color in the menu bar; spec §6.1).
+- [x] Show the stale status symbol in the menu bar itself, and a placeholder before the first price.
+- [x] Implement the popover market summary.
+- [x] Display 24-hour high, low, and BTC volume, with `—` for every market value before the first price (spec §6.2).
+- [x] Display Binance Spot market identity.
+- [x] Display connection state and data freshness with the status text from spec §6.2, and the last successful update time.
+- [x] Implement the Connecting, Reconnecting, Rate limited, Offline, Unavailable, and stale presentations (spec §6.2).
 - [ ] Check layout in light and dark appearances, on the current macOS release (macOS 27), including the translucent menu bar introduced in macOS 26. Record the result in the verification log (§9); M5 compares macOS 14 against it.
-- [ ] Add accessible labels for key values, including the stale status symbol (spec §6.5).
-- [ ] Verify with VoiceOver that the menu bar item and every popover value are read, and that a stale price is announced as not current (spec §12, criterion 7).
-- [ ] Check that the label stays readable with a larger menu bar text size and on a scaled display (spec §6.5).
-- [ ] Verify that frequent price updates do not cause visible flicker or excessive view work.
+- [x] Add accessible labels for key values, including the stale status symbol (spec §6.5).
+- [x] Verify with VoiceOver that the menu bar item and every popover value are read, and that a stale price is announced as not current (spec §12, criterion 7).
+- [x] Check that the label stays readable with a larger menu bar text size and on a scaled display (spec §6.5).
+- [x] Verify that frequent price updates do not cause visible flicker or excessive view work.
 
 **Exit criteria:** The app provides the complete v1 experience without a separate main window.
 
@@ -323,8 +323,8 @@ Results of the one-off manual verifications. A known limitation recorded here co
 | M1 | `Retry-After` readable from the task's `response` (spec §5.2) | Readable: the 429 rejection carried `Retry-After: 120` and the client read `120` | 2026-11-06 |
 | M1 | Automatic pong: transport kept (`URLSessionWebSocketTask` or `NWConnection`) (spec §5.5) | `URLSessionWebSocketTask` kept: one connection to `stream.binance.com` stayed open 6 min 19 s with 372 ticker messages and no close, so pongs are sent | 2026-11-06 |
 | M1 | Endpoint kept (`stream.binance.com` or `data-stream.binance.vision`) (spec §5.2) | `stream.binance.com` kept: it passed the handshake, payload, and ping/pong checks | 2026-11-06 |
-| M3 | Layout in light and dark appearances on macOS 27, including the translucent menu bar (spec §6.5) | — | — |
-| M3 | VoiceOver reads the menu bar item and every popover value; a stale price is announced as not current (spec §6.5, §12) | — | — |
+| M3 | Layout in light and dark appearances on macOS 27, including the translucent menu bar (spec §6.5) | macOS 27: pending. On macOS 26.6.2 (translucent menu bar): label and popover read correctly in light and dark, in Live, Stale, No data, Unavailable, and Rate limited; the long statuses wrap instead of truncating. Label also readable with Menu bar size Large and on a scaled resolution | 2026-11-06 |
+| M3 | VoiceOver reads the menu bar item and every popover value; a stale price is announced as not current (spec §6.5, §12) | Passed on macOS 26.6.2: the item reads "Bitcoin price 67.431,07, 24-hour change +2,45%", and "Bitcoin price not current: …" when stale; every popover value is read, and the stale price as "Price not current: …" | 2026-11-06 |
 | M4 | Signal that fires on every popover open (spec §6.3, §6.4) | — | — |
 | M4 | A second copy quits at launch: one menu bar item, one connection, no second item shown even briefly (spec §7) | — | — |
 | M4 | Last-update date prefix appears when the popover opens after midnight with stale data (spec §6.4) | — | — |

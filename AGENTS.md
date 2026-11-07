@@ -14,21 +14,22 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 
 ## Current state
 
-Milestones 0, 1, 2a, and 2b are done: menu bar shell with Quit, single-instance check, test plan,
-app icon, ticker parser, the WebSocket client with every retry rule of spec §5.5, and
-`MarketDataStore` with freshness, watchdog, path, and wake. The next step is Milestone 3
-(`docs/roadmap.md` §3). Update this section when a milestone is completed.
+Milestones 0 to 3 are done: menu bar shell with Quit, single-instance check, test plan, app icon,
+ticker parser, the WebSocket client with every retry rule of spec §5.5, `MarketDataStore` with
+freshness, watchdog, path, and wake, and the menu bar label and popover. The M3 layout check on
+macOS 27 is pending (`docs/roadmap.md` §9). The next step is Milestone 4 (`docs/roadmap.md` §3).
+Update this section when a milestone is completed.
 
-- `BitcoinTickerApp` creates and starts the store and keeps it in `@State`; M3 passes it to the
-  views.
+- `BitcoinTickerApp` creates the store in every process and starts it only outside a unit-test
+  host; the views read it directly.
+- The popover's last-update date prefix is evaluated only when the view re-renders; M4 adds the
+  re-evaluation on every popover open (spec §6.4).
 - Client tests use `ClientHarness` (`BinanceWebSocketClientTests.swift`) and store tests use
   `StoreHarness` (`MarketDataStoreTests.swift`): wait for a sleeper with `hasSleeper(at:)` or for a
   state before advancing the manual clock, or the test races the code under test.
 - `xcodebuild build` of Debug drops the test bundle from the app, so run `xcodebuild test` (not
   `test-without-building`) after it.
 
-- `MenuBarView` has a Debug-only `-MenuBarLabelPreview` argument used for the M0 label check;
-  remove it when M3 renders the real label.
 - Xcode 27 turns hardened runtime off in Debug builds, and a plain `xcodebuild build` of Release
   carries `get-task-allow`. Check signing on the archived `.app` only.
 
