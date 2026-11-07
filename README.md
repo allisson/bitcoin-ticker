@@ -41,10 +41,11 @@ macOS 14 (Sonoma) or later, on Apple silicon or Intel.
    Launch at login would not work.
 4. Open the app from Applications. It is signed ad hoc and not notarized by Apple, so macOS blocks
    the first launch:
-   - **macOS 15 or later:** after the warning, open System Settings → Privacy & Security, scroll
-     down, and click **Open Anyway** next to the message about Bitcoin Ticker, then confirm. The
-     button is offered for about an hour after the blocked launch; if it is gone, open the app
-     again first.
+   - **macOS 15 or later:** macOS says "“Bitcoin Ticker.app” Not Opened". Click **Done** (not
+     Move to Trash), open System Settings → Privacy & Security, scroll down, and click **Open
+     Anyway** next to the message about Bitcoin Ticker, then confirm with your password or Touch
+     ID. The button is offered for about an hour after the blocked launch; if it is gone, open the
+     app again first.
    - **macOS 14:** right-click (or Control-click) the app in Applications, choose **Open**, then
      **Open** again.
    - **Advanced alternative:** `xattr -dr com.apple.quarantine "/Applications/Bitcoin Ticker.app"`
