@@ -4,6 +4,7 @@ import SwiftUI
 /// (spec §6.1). It renders as a template, so it carries no color.
 struct MenuBarView: View {
     let store: MarketDataStore<ContinuousClock>
+    @AppStorage(PreferenceKey.showChange) private var showChange = true
 
     var body: some View {
         if let ticker = store.ticker {
@@ -15,17 +16,23 @@ struct MenuBarView: View {
                 if isStale {
                     Image(systemName: "exclamationmark.triangle")
                 }
-                Text("₿ \(price)  \(change)")
+                Text(showChange ? "₿ \(price)  \(change)" : "₿ \(price)")
             }
             .monospacedDigit()
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(isStale
-                ? "Bitcoin price not current: \(price), 24-hour change \(change)"
-                : "Bitcoin price \(price), 24-hour change \(change)")
+            .accessibilityLabel(
+                (isStale ? "Bitcoin price not current: \(price)" : "Bitcoin price \(price)")
+                    + (showChange ? ", 24-hour change \(change)" : "")
+            )
         } else {
             Text("₿ —")
                 .monospacedDigit()
                 .accessibilityLabel("Bitcoin price, no data yet")
         }
     }
+}
+
+enum PreferenceKey {
+    /// "Show 24h change in menu bar", default on (spec §6.3).
+    static let showChange = "showChangeInMenuBar"
 }

@@ -14,16 +14,19 @@ WebSocket. No API key, no account, no backend, no third-party dependencies.
 
 ## Current state
 
-Milestones 0 to 3 are done: menu bar shell with Quit, single-instance check, test plan, app icon,
+Milestones 0 to 4 are done: menu bar shell with Quit, single-instance check, test plan, app icon,
 ticker parser, the WebSocket client with every retry rule of spec §5.5, `MarketDataStore` with
-freshness, watchdog, path, and wake, and the menu bar label and popover. The M3 layout check on
-macOS 27 is pending (`docs/roadmap.md` §9). The next step is Milestone 4 (`docs/roadmap.md` §3).
+freshness, watchdog, path, and wake, the menu bar label and popover, and the two preference
+toggles. The M3 layout check on macOS 27 is pending (`docs/roadmap.md` §9). The next step is
+Milestone 5 (`docs/roadmap.md` §3).
 Update this section when a milestone is completed.
 
 - `BitcoinTickerApp` creates the store in every process and starts it only outside a unit-test
   host; the views read it directly.
-- The popover's last-update date prefix is evaluated only when the view re-renders; M4 adds the
-  re-evaluation on every popover open (spec §6.4).
+- The popover's `onAppear` fires on every open (`docs/roadmap.md` §9): it re-reads the
+  launch-at-login status and the date for the last-update prefix.
+- Turning Launch at login on in a Debug build registers its DerivedData path: turn it off before
+  deleting that build.
 - Client tests use `ClientHarness` (`BinanceWebSocketClientTests.swift`) and store tests use
   `StoreHarness` (`MarketDataStoreTests.swift`): wait for a sleeper with `hasSleeper(at:)` or for a
   state before advancing the manual clock, or the test races the code under test.
